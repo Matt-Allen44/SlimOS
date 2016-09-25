@@ -15,6 +15,8 @@ start:
   call smain                  ;call the c file
   hlt
 
+
+
 section .bss
 resb  8192                    ;reserve 8kb for the stack
 stack_space:

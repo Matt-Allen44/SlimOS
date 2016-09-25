@@ -5,6 +5,9 @@ char* interruptsEnabled();
 int clearScreen();
 int print();
 int println();
+int wait();
+char* getKeyCharFromScanCode(unsigned int scancode);
+static __inline unsigned char inb(unsigned short int port);
 /* End of Declerations *
 
 /* Start Of Colors */
@@ -25,14 +28,35 @@ unsigned int i = 0;
 
 void smain(void){
   clearScreen();
-
-  int loop = 0;
-  print("SlimOS > ", BLUE);
+  print("SlimOS > ", MAGENTA);
   println("Cleared Screen", BLACK);
 
-  print("SlimOS > ", BLUE);
+  print("SlimOS > ", MAGENTA);
+  print(inb(0x04), BLACK);
+  print(inb(0x02), BLACK);
+  print(inb(0x00), BLACK);
+
+  print("SlimOS > ", MAGENTA);
   print("IRQ Supported: ", BLACK);
   println(interruptsEnabled(), BLACK);
+
+  print("SlimOS > WAITING ", MAGENTA);
+
+  unsigned char lastChar;
+  unsigned char currChar;
+  while(1==1){
+    currChar = inb(0x60);
+    if(currChar != lastChar){
+      lastChar = currChar;
+      print(getKeyCharFromScanCode(currChar), BLACK);
+      print(" ", BLACK);
+
+      if(currChar == 0x3B){
+        clearScreen();
+        print("SlimOS > ", MAGENTA);
+      }
+    }
+  }
 
   return;
 }
@@ -48,6 +72,149 @@ char* interruptsEnabled(){
   } else {
     return "FALSE";
   }
+}
+
+char *getKeyCharFromScanCode(unsigned int scancode){
+  if(scancode == 0x02){
+    return "1";
+  } else if (scancode == 0x03){
+    return "2";
+  } else if (scancode == 0x04){
+    return "3";
+  } else if (scancode == 0x05){
+    return "4";
+  } else if (scancode == 0x06){
+    return "5";
+  } else if (scancode == 0x07){
+    return "6";
+  } else if (scancode == 0x08){
+    return "7";
+  } else if (scancode == 0x09){
+    return "8";
+  } else if (scancode == 0x0A){
+    return "9";
+  } else if (scancode == 0x0B){
+    return "0";
+  } else if (scancode == 0x0C){
+    return "-";
+  } else if (scancode == 0x0D){
+    return "=";
+  } else if (scancode == 0x0E){
+    return "BACKSPACE";
+  } else if (scancode == 0x0F){
+    return "TAB";
+  } else if(scancode == 0x10){
+    return "Q";
+  } else if(scancode == 0x11){
+    return "W";
+  } else if(scancode == 0x12){
+    return "E";
+  } else if (scancode == 0x13){
+    return "R";
+  } else if (scancode == 0x14){
+    return "T";
+  } else if (scancode == 0x15){
+    return "Y";
+  } else if (scancode == 0x16){
+    return "U";
+  } else if (scancode == 0x17){
+    return "I";
+  } else if (scancode == 0x18){
+    return "O";
+  } else if (scancode == 0x19){
+    return "P";
+  } else if (scancode == 0x1A){
+    return "[";
+  } else if (scancode == 0x1B){
+    return "]";
+  } else if (scancode == 0x1C){
+    return "ENTER";
+  } else if (scancode == 0x1D){
+    return "LCTRL";
+  } else if (scancode == 0x1E){
+    return "A";
+  } else if (scancode == 0x1F){
+    return "S";
+  } else if(scancode == 0x20){
+    return "D";
+  } else if(scancode == 0x21){
+    return "F";
+  } else if(scancode == 0x22){
+    return "G";
+  } else if (scancode == 0x23){
+    return "H";
+  } else if (scancode == 0x24){
+    return "J";
+  } else if (scancode == 0x25){
+    return "K";
+  } else if (scancode == 0x26){
+    return "L";
+  } else if (scancode == 0x27){
+    return ";";
+  } else if (scancode == 0x28){
+    return "'";
+  } else if (scancode == 0x29){
+    return "`";
+  } else if (scancode == 0x2A){
+    return "LSHIFT";
+  } else if (scancode == 0x2B){
+    return "\\";
+  } else if (scancode == 0x2C){
+    return "Z";
+  } else if (scancode == 0x2D){
+    return "X";
+  } else if (scancode == 0x2E){
+    return "C";
+  } else if (scancode == 0x2F){
+    return "V";
+  } else if(scancode == 0x30){
+    return "B";
+  } else if(scancode == 0x31){
+    return "N";
+  } else if(scancode == 0x32){
+    return "M";
+  } else if (scancode == 0x33){
+    return ",";
+  } else if (scancode == 0x34){
+    return ".";
+  } else if (scancode == 0x35){
+    return "/";
+  } else if (scancode == 0x36){
+    return "RSHIFT";
+  } else if (scancode == 0x37){
+    return "*";
+  } else if (scancode == 0x38){
+    return "LALT";
+  } else if (scancode == 0x39){
+    return "SPACE";
+  } else if (scancode == 0x3A){
+    return "CAPS";
+  } else if (scancode == 0x3B){
+    return "F1";
+  } else if (scancode == 0x3C){
+    return "F2";
+  } else if (scancode == 0x3D){
+    return "F3";
+  } else if (scancode == 0x3E){
+    return "F4";
+  } else if (scancode == 0x3F){
+    return "F5";
+  } else if(scancode == 0x40){
+    return "F6";
+  } else if(scancode == 0x41){
+    return "F7";
+  } else if(scancode == 0x42){
+    return "F8";
+  } else if (scancode == 0x43){
+    return "F9";
+  } else if (scancode == 0x44){
+    return "F10";
+  } else if (scancode == 0x45){
+    return "NUMLOCK";
+  } else if (scancode == 0x46){
+    return "SCROLLLOCK";
+  }
+  return "";
 }
 
 int clearScreen(){
@@ -76,6 +243,13 @@ int print(char *str, unsigned int col){
   }
 }
 
+static __inline unsigned char inb (unsigned short int port)
+{
+  unsigned char _v;
+
+  __asm__ __volatile__ ("inb %w1,%0":"=a" (_v):"Nd" (port));
+  return _v;
+}
 
 /*  COLORS TABLE
     0 - Black, 1 - Blue, 2 - Green, 3 - Cyan, 4 - Red, 5 - Magenta, 6 - Brown
@@ -87,4 +261,7 @@ int println(char *str, unsigned int col){
 
   int bytesInALine = 160;
   i = bytesInALine * (i/bytesInALine) + bytesInALine;
+}
+
+int wait(){
 }
