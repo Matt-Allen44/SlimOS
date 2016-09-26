@@ -5,6 +5,7 @@ char* interruptsEnabled();
 int clearScreen();
 int print();
 int println();
+int drawCursor(int offset);
 int wait();
 char* getKeyCharFromScanCode(unsigned int scancode);
 static __inline unsigned char inb(unsigned short int port);
@@ -25,6 +26,7 @@ const int GRAY = 0x78;
 
 char *VideoMemPointer = (char*)0xb8000; //Pointer for the beggining of the video memory
 unsigned int i = 0;
+unsigned int p = 0; //Pointer location
 
 void smain(void){
   clearScreen();
@@ -32,15 +34,10 @@ void smain(void){
   println("Cleared Screen", BLACK);
 
   print("SlimOS > ", MAGENTA);
-  print(inb(0x04), BLACK);
-  print(inb(0x02), BLACK);
-  print(inb(0x00), BLACK);
-
-  print("SlimOS > ", MAGENTA);
   print("IRQ Supported: ", BLACK);
   println(interruptsEnabled(), BLACK);
 
-  print("SlimOS > WAITING ", MAGENTA);
+  print("SlimOS > ", MAGENTA);
 
   unsigned char lastChar;
   unsigned char currChar;
@@ -49,7 +46,6 @@ void smain(void){
     if(currChar != lastChar){
       lastChar = currChar;
       print(getKeyCharFromScanCode(currChar), BLACK);
-      print(" ", BLACK);
 
       if(currChar == 0x3B){
         clearScreen();
@@ -75,6 +71,7 @@ char* interruptsEnabled(){
 }
 
 char *getKeyCharFromScanCode(unsigned int scancode){
+  drawCursor(1);
   if(scancode == 0x02){
     return "1";
   } else if (scancode == 0x03){
@@ -100,7 +97,10 @@ char *getKeyCharFromScanCode(unsigned int scancode){
   } else if (scancode == 0x0D){
     return "=";
   } else if (scancode == 0x0E){
-    return "BACKSPACE";
+    //backspace
+    i = i-2;  //Clear current character
+    print(" ", BLACK);
+    i = i-2;  //Set video memory to overwrite free space
   } else if (scancode == 0x0F){
     return "TAB";
   } else if(scancode == 0x10){
@@ -186,7 +186,7 @@ char *getKeyCharFromScanCode(unsigned int scancode){
   } else if (scancode == 0x38){
     return "LALT";
   } else if (scancode == 0x39){
-    return "SPACE";
+    return " ";
   } else if (scancode == 0x3A){
     return "CAPS";
   } else if (scancode == 0x3B){
@@ -213,6 +213,15 @@ char *getKeyCharFromScanCode(unsigned int scancode){
     return "NUMLOCK";
   } else if (scancode == 0x46){
     return "SCROLLLOCK";
+  } else if (scancode == 0x48 ){
+    //UP ARROW
+  } else if (scancode == 0x4D){
+    //RIGHT ARROW
+    drawCursor(3);
+  } else if (scancode == 0x50){
+    //DOWN ARROW
+  } else if (scancode == 0X48){
+    //UP ARROW
   }
   return "";
 }
@@ -230,6 +239,11 @@ int clearScreen(){
   i = 0;
 }
 
+int drawCursor(int offset){
+  p = p+offset;
+  VideoMemPointer[p] = 0x00;
+}
+
 int print(char *str, unsigned int col){
   unsigned int j = 0;
 
@@ -241,6 +255,7 @@ int print(char *str, unsigned int col){
     j = j+1;
     i = i+2;
   }
+  //p=i;
 }
 
 static __inline unsigned char inb (unsigned short int port)
