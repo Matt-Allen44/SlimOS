@@ -15,15 +15,15 @@ static inline void outb(unsigned char value, unsigned short int port);
 /* End of Declerations *
 
 /* Start Of Colors */
-const int BLACK = 0x70;
-const int BLUE = 0x71;
-const int GREEN = 0x72;
-const int CYAN = 0x73;
-const int RED = 0x74;
-const int MAGENTA = 0x75;
-const int BROWN = 0x76;
-const int GREY = 0x77;
-const int GRAY = 0x78;
+const int BLACK = 0xF0;
+const int BLUE = 0xF1;
+const int GREEN = 0xF2;
+const int CYAN = 0xF3;
+const int RED = 0xF4;
+const int MAGENTA = 0xF5;
+const int BROWN = 0xF6;
+const int GREY = 0xF7;
+const int GRAY = 0xF8;
 /* End Of Colors */
 
 
@@ -312,7 +312,7 @@ int clearScreen(){
   /* loop through all of video memory and clear it */
   while(j < 80*25*2){
     VideoMemPointer[j] = ' ';
-    VideoMemPointer[j+1] = 0x72;
+    VideoMemPointer[j+1] = 0xF2;
 
     j = j + 2; //increment to next section of screen (as 2 bytes per section)
   }
@@ -377,7 +377,7 @@ static inline void outb(unsigned char value, unsigned short int port)
 int println(char *str, unsigned int col){
   print(str, col);
 
-  VideoMemPointer[i+3] = 0x72; //Clear cursor at the end of a line
+  VideoMemPointer[i+3] = 0xF2; //Clear cursor at the end of a line
   int bytesInALine = 160;
   i = bytesInALine * (i/bytesInALine) + bytesInALine + 2;
 }
